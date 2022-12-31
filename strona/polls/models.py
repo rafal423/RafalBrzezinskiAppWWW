@@ -1,39 +1,43 @@
 import datetime
 
+from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
+
+class Druzyna(models.Model):
+    nazwa = models.CharField(max_length=50)
+    kraj = models.CharField(max_length=2,validators=[RegexValidator('^[A-Z]*$',
+                               'Tylko duże litery.')],)
+    def __str__(self):
+        return '%s (%s)' % (self.nazwa, self.kraj)
+
+    class Meta:
+        ordering = ["nazwa"]
+        verbose_name_plural = "drużyny"
 
 class Osoba(models.Model):
     imie = models.CharField(max_length=50, blank=False)
     nazwisko = models.CharField(max_length=100, blank=False)
-    STYCZEN =  'ST'
-    LUTY =  'LU'
-    MARZEC =  'MA'
-    KWIECIEN =  'KW'
-    MAJ =  'MJ'
-    CZERWIEC =  'CZ'
-    LIPIEC =  'LI'
-    SIERPIEN =  'SI'
-    WRZESIEN =  'WR'
-    PAZDZIERNIK =  'PA'
-    LISTOPAD =  'LS'
-    GRUDZIEN =  'GR'
-    miesiace_wybory = [
-        (STYCZEN, 'Styczeń'),
-        (LUTY, 'Luty'),
-        (MARZEC, 'Marzec'),
-        (KWIECIEN, 'Kwiecień'),
-        (MAJ, 'Maj'),
-        (CZERWIEC, 'Czerwiec'),
-        (LIPIEC, 'Lipiec'),
-        (SIERPIEN, 'Sierpień'),
-        (WRZESIEN, 'Wrzesień'),
-        (PAZDZIERNIK, 'Październik'),
-        (LISTOPAD, 'Listopad'),
-        (GRUDZIEN, 'Grudzień'),
-    ]
-    miesiac_urodzenia = models.CharField(
-        max_length=2,
-        choices=miesiace_wybory,
-        default=STYCZEN,
-    )
+    class Miesiace (models.IntegerChoices):
+        STYCZEN = 1, ("Styczeń")
+        LUTY = 2, ("Luty")
+        MARZEC = 3, ("Marzec")
+        KWIECIEN = 4, ("Kwiecień")
+        MAJ = 5, ("Maj")
+        CZERWIEC = 6, ("Czerwiec")
+        LIPIEC = 7, ("Lipiec")
+        SIERPIEN = 8, ("Sierpień")
+        WRZESIEN = 9, ("Wrzesień")
+        PAZDZIERNIK = 10, ("Październik")
+        LISTOPAD = 11, ("Listopad")
+        GRUDZIEN = 12, ("Grudzień")
+    miesiac_urodzenia = models.IntegerField(choices=Miesiace.choices, default=0)
+    druzyna = models.ForeignKey(Druzyna, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return '%s %s' % (self.imie, self.nazwisko)
+
+    class Meta:
+        ordering = ["nazwisko"]
+        verbose_name_plural = "osoby"
+
