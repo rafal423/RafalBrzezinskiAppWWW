@@ -1,5 +1,9 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.response import Response
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -21,7 +25,7 @@ def person_list(request):
         return Response(serializer.data)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET'])
 def person_detail(request, pk):
 
     """
@@ -34,15 +38,16 @@ def person_detail(request, pk):
     except Osoba.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    """
-    Zwraca pojedynczy obiekt typu Person.
-    """
-    if request.method == 'GET':
+@api_view(['PUT', 'DELETE'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def person_update_delete(request, pk):
+    try:
         person = Osoba.objects.get(pk=pk)
-        serializer = OsobaSerializer(person)
-        return Response(serializer.data)
+    except Osoba.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
-    elif request.method == 'PUT':
+    if request.method == 'PUT':
         serializer = OsobaSerializer(person, data=request.data)
         if serializer.is_valid():
             serializer.save()
