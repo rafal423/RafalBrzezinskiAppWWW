@@ -26,6 +26,7 @@ def person_list(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def person_detail(request, pk):
 
     """

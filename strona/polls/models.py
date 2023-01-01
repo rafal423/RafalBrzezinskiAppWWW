@@ -7,6 +7,7 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
 
 class Druzyna(models.Model):
     nazwa = models.CharField(max_length=50)
@@ -37,6 +38,7 @@ class Osoba(models.Model):
         GRUDZIEN = 12, ("Grudzień")
     miesiac_urodzenia = models.IntegerField(choices=Miesiace.choices, default=timezone.now().month)
     druzyna = models.ForeignKey(Druzyna, null=True, blank=True, on_delete=models.SET_NULL)
+    owner = models.ForeignKey('auth.User', related_name='wlasciciel', on_delete=models.CASCADE)
 
     @receiver(post_save, sender=settings.AUTH_USER_MODEL)
     def create_auth_token(sender, instance=None, created=False, **kwargs):
