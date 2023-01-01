@@ -15,6 +15,14 @@ class DruzynaSerializer(serializers.Serializer):
         instance.save()
         return instance
 
+    def validate_kraj(self, value):
+        if not value.isupper():
+            raise serializers.ValidationError(
+                "Inicjały kraju piszemy wielkimi literami",
+            )
+        return value
+
+
 class OsobaSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     imie = serializers.CharField(max_length=50, allow_blank=False)
@@ -32,3 +40,19 @@ class OsobaSerializer(serializers.Serializer):
         instance.druzyna = validated_data.get('druzyna', instance.druzyna)
         instance.save()
         return instance
+
+    def validate_imie(self, value):
+        if not value.isalpha():
+            raise serializers.ValidationError(
+                "W imieniu powinny być tylko litery",
+            )
+        return value
+
+    def validate_nazwisko(self, value):
+        if not value.isalpha():
+            raise serializers.ValidationError(
+                "W nazwisku powinny być tylko litery",
+            )
+        return value
+
+

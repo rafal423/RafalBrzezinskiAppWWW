@@ -31,7 +31,7 @@ class Osoba(models.Model):
         PAZDZIERNIK = 10, ("Październik")
         LISTOPAD = 11, ("Listopad")
         GRUDZIEN = 12, ("Grudzień")
-    miesiac_urodzenia = models.IntegerField(choices=Miesiace.choices, default=0)
+    miesiac_urodzenia = models.IntegerField(choices=Miesiace.choices, default=timezone.now().month)
     druzyna = models.ForeignKey(Druzyna, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
