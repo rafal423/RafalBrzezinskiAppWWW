@@ -32,7 +32,7 @@ class Osoba(models.Model):
         LISTOPAD = 11, ("Listopad")
         GRUDZIEN = 12, ("Grudzień")
     miesiac_urodzenia = models.IntegerField(choices=Miesiace.choices, default=0)
-    druzyna = models.ForeignKey(Druzyna, null=True, on_delete=models.SET_NULL)
+    druzyna = models.ForeignKey(Druzyna, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return '%s %s' % (self.imie, self.nazwisko)
